@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<fxpProperties abbreviated="false" authoringTool="Flex Builder" compiles="true" parentProject="37ffd605-a423-4913-8e09-d02807b200db" projectUUID="37ffd605-a423-4913-8e09-d02807b200db" sdkVersion="4.0.0" uuid="8bf382e8-9934-42a9-94d8-9c9e3e95c76e" version="4">
+  <projects/>
+  <src/>
+  <swc>
+    <linked location="sdkPlaceHolder" path="sdkPlaceHolder" position="0" uuid="8bf382e8-9934-42a9-94d8-9c9e3e95c76e"/>
+    <linked location="C:/flex4esst/Fatty flex/libs" path="/libs" position="1" uuid="ccce4feb-dc82-42e4-804a-fd63e095bc92"/>
+    <linked location="${FLEXUNIT_LIB_LOCATION}/version4libs/Common/" path="${FLEXUNIT_LIB_LOCATION}/version4libs/Common/" position="2" uuid="ccce4feb-dc82-42e4-804a-fd63e095bc92"/>
+    <linked location="${FLEXUNIT_LIB_LOCATION}/version4libs/FlexProject/" path="${FLEXUNIT_LIB_LOCATION}/version4libs/FlexProject/" position="3" uuid="ccce4feb-dc82-42e4-804a-fd63e095bc92"/>
+    <linked location="${FLEXUNIT_LOCALE_LOCATION}/version4locale/" path="${FLEXUNIT_LOCALE_LOCATION}/version4locale/" position="4" uuid="ccce4feb-dc82-42e4-804a-fd63e095bc92"/>
+  </swc>
+  <misc/>
+  <theme/>
+</fxpProperties>

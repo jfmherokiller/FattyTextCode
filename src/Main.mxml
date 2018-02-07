@@ -1,0 +1,1015 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   width="1050" height="625" 
+			   xmlns:valueObjects="valueObjects.*" 
+			   applicationComplete="introduction()"
+			   backgroundColor="#ffffcc" 
+			   backgroundColor.combat="#FBC4BB" backgroundColor.combatInventory="#FBC4BB"  backgroundColor.combatSpells="#FBC4BB"
+			   backgroundColor.levelUp="#DAFFDE" 
+			   backgroundColor.defeated="#ABABAB" 
+			   backgroundColor.inventory="#E2CCFF" backgroundColor.spells="#E2CCFF"
+			   backgroundColor.storage="#CDA275">
+	<s:layout>
+		<s:BasicLayout/>
+	</s:layout>
+	<fx:Style>
+		@namespace s "library://ns.adobe.com/flex/spark";
+		@namespace mx "library://ns.adobe.com/flex/mx";
+		@namespace valueObjects "valueObjects.*";
+		
+		s|BorderContainer{
+			borderColor:10053120;
+			borderAlpha:0.25;
+			borderWeight:2;
+			backgroundAlpha:0.3;
+			backgroundColor:10053120;
+		}
+		mx|Grid{
+			paddingLeft:4;
+			paddingRight:4;
+			paddingTop:4;
+			paddingBottom:4;
+			verticalAlign:middle;
+			borderVisible:true;
+			borderStyle:solid;
+			borderColor:10053120;
+			borderAlpha:0.5;
+			backgroundAlpha:0.3;
+			backgroundColor:10053120;
+		}
+		mx|TextArea{
+			contentBackgroundColor:10053120;
+			contentBackgroundAlpha:0.3;
+			borderColor:10053120;
+			borderAlpha:0.25;
+			borderWeight:2;
+			top:5;
+			left:5;
+		}
+		
+	</fx:Style>
+	<s:states>
+		<s:State name="default"/>
+		<s:State name="combat"/>
+		<s:State name="inventory"/>
+		<s:State name="combatInventory"/>
+		<s:State name="spells"/>
+		<s:State name="combatSpells"/>
+		<s:State name="levelUp"/>
+		<s:State name="surroundings"/>
+		<s:State name="defeated"/>
+		<s:State name="appearance"/>
+		<s:State name="storage"/>
+		<s:State name="options"/>
+		<s:State name="customSpecies"/>
+		<s:State name="cheat"/>
+	</s:states>
+	<fx:Declarations>
+		
+		
+<!--Damage Types********************************************-->
+	<!--physical-->
+		<valueObjects:DamageType id="BashingDamage" name="bashing"/>
+		<valueObjects:DamageType id="PiercingDamage" name="piercing"/>
+		<valueObjects:DamageType id="SlashingDamage" name="slashing"/>
+		
+	<!--Magical-->
+		<valueObjects:DamageType id="FireDamage" name="fire"/>
+		<valueObjects:DamageType id="IceDamage" name="ice"/>
+		<valueObjects:DamageType id="LightningDamage" name="lightning"/>
+		<valueObjects:DamageType id="waterDamage" name="water"/>
+		<valueObjects:DamageType id="ArcaneDamage" name="arcane"/>
+		<valueObjects:DamageType id="LifeDamage" name="life"/>
+		<valueObjects:DamageType id="DeathDamage" name="death"/>
+		
+<!--Defeats********************************************-->
+		<valueObjects:Defeats id="devoured" location="{exampleCenter}"/>
+		<valueObjects:Defeats id="overeating" location="{exampleCenter}"/>
+		<valueObjects:Defeats id="exploded" location="{exampleCenter}"/>
+		<valueObjects:Defeats id="battle" location="{exampleCenter}"/>							  
+		<valueObjects:Defeats id="floating" location="{exampleCenter}"/>							  
+		<valueObjects:Defeats id="transformed" location="{exampleCenter}"/>							  
+		
+<!--Enemies**************************************************************************-->
+		<!--Enemy template
+		<valueObjects:Enemies id="" name="" image="{}" species="{}" gender="{}"
+		voreable="" weight=""
+		description=""
+		playerEscape=""
+		playerEscapeFail=""
+		grappleEscapeFail=""
+		grappleEscapeSucceed=""
+		victory=""
+		itemFound=""
+		STR="" AGI="" INT="" DEF="" maxHEA="" level="" damageWeakness="{[]}"
+		GLD="" XP="" item="{}" itemChance=""/>	
+		-->
+		
+		
+<!--Genders******************************************************-->
+		<valueObjects:Gender id="Male" name="male" man="man" 
+							 boy="boy" sir="sir" mister="mister" brother="brother" 
+							 guy="guy" fella="fella" buddy="buddy" gentleman="gentleman" lad="lad" laddie="laddie" sport="sport"
+							 he="he" him="him" himself="himself" his="his"/>
+		<valueObjects:Gender id="Female" name="female" man="woman" 
+							 boy="girl" sir="ma&apos;am" mister="miss" brother="sister" 
+							 guy="lady" fella="missy" buddy="missy" gentleman="lady" lad="lass" laddie="lassie" sport="sugar"
+							 he="she" him="her" himself="herself" his="her"/>
+		<valueObjects:Gender id="Neutral" name="thing" man="thing" 
+							 boy="thing" sir="...sir" mister="...mister" brother="...brother" 
+							 guy="thing" fella="thing" lad="thing"
+							 he="it" him="it" himself="itself" his="its"/>
+	
+		
+<!--Items******************************************************-->
+		<!--Weapons-->
+		<valueObjects:Items id="Weaponless" Name="fists" Value="0"
+							Weapon="true" type="weapon"
+							Description="You only have your bare fists to fight with. "
+							attackDescription="You punch your enemy,  "
+							WEAd="1" WEAr="4" damageType="{BashingDamage}"
+							damageStat="STR" damageScaling="0.2"/>
+		<!--Armor-->
+		<valueObjects:Items id="Armorless" Name="unarmored" Value="0"
+							Armor="true" type="armor"
+							Description="You&apos;re wearing no armor. "
+							Defense="0"/>
+		<!--Shirts-->
+		<valueObjects:Items id="Shirtless" Name="naked chest" Value="0"
+							Top="true" type="shirt"
+							PoppedDescription="You&apos;re nude from the waist up. "
+							Description="You&apos;re nude from the waist up. "/>
+		<!--Pants-->
+		<valueObjects:Items id="Pantsless" Name="naked legs" Value="0"
+							Bottom="true" type="pants"
+							PoppedDescription="You&apos;re nude from the waist down. "
+							Description="You&apos;re nude from the waist down. "/>
+
+
+		
+<!--Locations********************************************-->
+		<!--Zones-->
+		<valueObjects:Zones id="impassable"/>
+		
+		<!--locations-->
+		<valueObjects:Locations id="YourHouse" Name="Your House"
+								Description=""/>
+		
+		<valueObjects:Locations id="exampleCenter" Name="Central area" type="{event}"
+								Description="The center area of the map"
+								Surroundings="{[exampleNW,exampleN,exampleNE,exampleW,blank,exampleE,exampleSW,exampleS,exampleSE]}"/>
+		<valueObjects:Locations id="exampleNW" Name="Northwest corner" type="{event}"
+								Description="The Northwest corner of the map"
+								Surroundings="{[wall,wall,wall,wall,blank,exampleN,wall,exampleW,exampleCenter]}"/>
+		<valueObjects:Locations id="exampleN" Name="North side" type="{event}"
+								Description="The North side of the map"
+								Surroundings="{[wall,wall,wall,exampleNW,blank,exampleNE,exampleW,exampleCenter,exampleE]}"/>
+		<valueObjects:Locations id="exampleNE" Name="Northeast corner" type="{event}"
+								Description="The Northeast corner of the map"
+								Surroundings="{[wall,wall,wall,exampleN,blank,wall,exampleCenter,exampleE,wall]}"/>
+		<valueObjects:Locations id="exampleW" Name="West side" type="{event}"
+								Description="The West side of the map"
+								Surroundings="{[wall,exampleNW,exampleN,wall,blank,exampleCenter,wall,exampleSW,exampleS]}"/>
+		<valueObjects:Locations id="exampleE" Name="East side" type="{event}"
+								Description="The East side of the map"
+								Surroundings="{[exampleN,exampleNE,wall,exampleCenter,blank,wall,exampleS,exampleSE,wall]}"/>
+		<valueObjects:Locations id="exampleSW" Name="Southwest corner" type="{event}"
+								Description="The Southwest corner of the map"
+								Surroundings="{[wall,exampleW,exampleCenter,wall,blank,exampleS,wall,wall,wall]}"/>
+		<valueObjects:Locations id="exampleS" Name="South side" type="{event}"
+								Description="The South side of the map"
+								Surroundings="{[exampleW,exampleCenter,exampleE,exampleSW,blank,exampleSE,wall,wall,wall]}"/>
+		<valueObjects:Locations id="exampleSE" Name="Southeast corner" type="{event}"
+								Description="The Southeast corner of the map"
+								Surroundings="{[exampleCenter,exampleE,wall,exampleS,blank,wall,wall,wall,wall]}"/>
+
+	<!--Utility locations-->
+		<valueObjects:Locations id="blank" locationZone="{impassable}" Name=""/>
+		<valueObjects:Locations id="wall" locationZone="{impassable}" Name="Wall"/>
+		
+		
+<!--Location types*******************************************************-->
+		<valueObjects:LocationType id="store"/>
+		<valueObjects:LocationType id="wilderness"/>
+		<valueObjects:LocationType id="event"/>
+		
+<!--Quests*******************************************************-->
+		
+		
+<!--Species********************************************-->
+		<valueObjects:Species id="Lion" speciesName="lion" fName="lioness"
+							  statChange="{new Array(5,5,5,0,10,4)}" baseHeight="71"
+							  furBack="golden" furBelly="white" furHead="brown" hair="mane"/>
+	
+		
+<!--Spells***************************************************-->
+		
+		
+<!--Vendors***************************************************-->
+
+		
+<!--Test********************************************-->
+		<valueObjects:Enemies id="TestEnemy" name="Test"/>
+		
+		<valueObjects:NPCs id="defaultNPC" species="{Lion}" gender="{Male}" name="Unnamed "/>
+		
+		
+		
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import flash.net.registerClassAlias;
+			import flash.text.engine.FontPosture;
+			import flash.trace.Trace;
+			
+			import mx.states.State;
+			import mx.utils.ObjectUtil;
+			
+			import spark.effects.Scale;
+			
+			import valueObjects.DamageType;
+			import valueObjects.Defeats;
+			import valueObjects.Enemies;
+			import valueObjects.Gender;
+			import valueObjects.Items;
+			import valueObjects.Locations;
+			import valueObjects.NPCs;
+			import valueObjects.Species;
+			import valueObjects.Spells;
+			import valueObjects.Vendors;
+			import valueObjects.Zones;
+			
+			registerClassAlias("src.valueObjects.Items", Items);
+			registerClassAlias("src.valueObjects.Quests", Quests);
+			registerClassAlias("src.valueObjects.Player", Species);
+			registerClassAlias("src.valueObjects.Enemies", Enemies);
+			registerClassAlias("src.valueObjects.Gender", Gender);
+			registerClassAlias("src.valueObjects.NPCs", NPCs);
+			registerClassAlias("src.valueObjects.Spells", Spells);
+			registerClassAlias("src.valueObjects.DamageType", DamageType);
+			registerClassAlias("src.valueObjects.Vendors", Vendors);
+			
+			include "codeSections/gameVariables.as";
+			include "codeSections/gameButtons.as";
+			include "codeSections/gameNewGame.as";
+			include "codeSections/gameDisplay.as"
+			include "codeSections/gameStats.as"
+			include "codeSections/gameRandomization.as"
+			include "codeSections/gameSaveLoad.as"
+			include "codeSections/gameTime.as"
+			include "codeSections/gameItems.as";
+			include "codeSections/gameActions.as";
+			include "codeSections/gameCombat.as"
+			include "codeSections/gameTravel.as";
+			include "codeSections/gameQuests.as";
+			include "codeSections/events/gameEvents.as";
+			
+		]]>
+	</fx:Script>
+	
+	<s:Group id="UI" width="1050" height="625">
+		
+		<!--Images-->
+		
+		<!--scene/monster images-->
+		<s:Group id="gameImages" top="15" horizontalCenter="350" excludeFrom="customSpecies,cheat">
+			<!--Backgrounds-->
+			<mx:Image id="sceneImage" source="{backgroundImageSource}"/>
+			<!--Monsters-->
+			<mx:Image id="enemyImage" horizontalCenter="-3" bottom="20" includeIn="combat,combatInventory,combatSpells" source="{enemyImageSource}"/>
+		</s:Group>
+		
+		
+	<!--Cheat options-->
+		<s:VGroup id="cheatOptions" includeIn="cheat" horizontalAlign="center" verticalCenter="0" horizontalCenter="0">
+			<s:HGroup>
+				<s:Label text="Strength"/>
+				<s:TextInput id="cheatStrength" text="" maxChars="9" restrict="0-9"/>
+			</s:HGroup>
+			<s:HGroup>
+				<s:Label text="Agility"/>
+				<s:TextInput id="cheatAgility" text="" maxChars="9" restrict="0-9"/>
+			</s:HGroup>
+			<s:HGroup>
+				<s:Label text="Intelligence"/>
+				<s:TextInput id="cheatIntelligence" text="" maxChars="9" restrict="0-9"/>
+			</s:HGroup>
+			<s:HGroup>
+				<s:Label text="Endurance"/>
+				<s:TextInput id="cheatEndurance" text="" maxChars="9" restrict="0-9"/>
+			</s:HGroup>
+			<s:HGroup>
+				<s:Label text="Stomach capacity"/>
+				<s:TextInput id="cheatStomach" text="" maxChars="9" restrict="0-9"/>
+			</s:HGroup>
+			<s:HGroup>
+				<s:Label text="Health"/>
+				<s:TextInput id="cheatHealth" text="" maxChars="9" restrict="0-9"/>
+			</s:HGroup>
+			<s:HGroup>
+				<s:Label text="Fatness"/>
+				<s:TextInput id="cheatFat" text="" maxChars="9" restrict="0-9"/>
+			</s:HGroup>
+			<s:HGroup>
+				<s:Label text="Gold"/>
+				<s:TextInput id="cheatGold" text="" maxChars="9" restrict="0-9"/>
+			</s:HGroup>
+			<s:HGroup>
+				<valueObjects:WrapButton id="cheatDone" label="Accept" click="acceptCheat()"/>
+				<valueObjects:WrapButton id="cheatCancel" label="Cancel" click="changeOptions()"/>
+			</s:HGroup>
+		</s:VGroup>
+		
+	<!--Custom Species Options-->
+		<s:VGroup id="speciesDescriptors" 
+				  textAlign="center" fontSize="16" horizontalAlign="center"
+				  horizontalCenter="0" verticalCenter="0" 
+				  includeIn="customSpecies" >
+			
+			<!--Instructions-->
+			<mx:TextArea contentBackgroundAlpha="0.3" contentBackgroundColor="10053120" fontWeight="bold" width="100%" editable="false"
+						text="All fields must be filled in to continue. "/>
+			
+			<!--Species description-->
+			<mx:Grid backgroundAlpha="0.3" backgroundColor="10053120">
+				<!--Names-->
+				<mx:GridRow>
+					<mx:GridItem>
+						<mx:Label text="Article"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<mx:Label text="Name"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<mx:Label text="Female name"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<mx:Label text="Male name"/>
+					</mx:GridItem>
+				</mx:GridRow>
+				
+				<mx:GridRow>
+					<mx:GridItem>
+						<mx:TextInput id="inputArticle" restrict="A-Za-z" text="a/an"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<mx:TextInput id="inputName" restrict="A-Za-z" text="wolf/bat/deer"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<mx:TextInput id="inputFName" restrict="A-Za-z" text="lioness/cow"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<mx:TextInput id="inputMName" restrict="A-Za-z" text="bull/lion"/>
+					</mx:GridItem>
+				</mx:GridRow>
+				
+				<!--Colors-->
+				<mx:GridRow>
+					<mx:GridItem>
+						<mx:Label text="Back Color"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<mx:Label text="Belly color"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<mx:Label text="Head color"/>
+					</mx:GridItem>
+				</mx:GridRow>
+				
+				<mx:GridRow>
+					<mx:GridItem>
+						<mx:TextInput id="inputBack" restrict="A-Za-z" text="brown/black/white"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<mx:TextInput id="inputBelly" restrict="A-Za-z" text="brown/black/white"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<mx:TextInput id="inputHead" restrict="A-Za-z" text="brown/black/white"/>
+					</mx:GridItem>
+				</mx:GridRow>
+				
+				<!--Fur-->
+				<mx:GridRow>
+					<mx:GridItem>
+						<mx:Label text="Hair"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<mx:Label text="Fur"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<mx:Label text="Furred"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<mx:Label text="Furry"/>
+					</mx:GridItem>
+				</mx:GridRow>
+				
+				<mx:GridRow>
+					<mx:GridItem>
+						<mx:TextInput id="inputHair" restrict="A-Za-z" text="hair/mane/fur"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<mx:TextInput id="inputFur" restrict="A-Za-z" text="fur/skin/scales"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<mx:TextInput id="inputFurred" restrict="A-Za-z" text="furred/skinned/scaled"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<mx:TextInput id="inputFurry" restrict="A-Za-z" text="furry/skinned/scaley"/>
+					</mx:GridItem>
+				</mx:GridRow>
+				
+				<!--Limbs?-->
+				<mx:GridRow>
+					<mx:GridItem>
+						<mx:Label text="Hand"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<mx:Label text="Hands"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<mx:Label text="Foot"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<mx:Label text="Feet"/>
+					</mx:GridItem>
+				</mx:GridRow>
+				
+				<mx:GridRow>
+					<mx:GridItem>
+						<mx:TextInput id="inputHand" restrict="A-Za-z" text="hand/paw/flipper"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<mx:TextInput id="inputHands" restrict="A-Za-z" text="hads/paws/flippers"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<mx:TextInput id="inputFoot" restrict="A-Za-z" text="foot/hoof/flipper"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<mx:TextInput id="inputFeet" restrict="A-Za-z" text="feet/hooves/flippers"/>
+					</mx:GridItem>
+				</mx:GridRow>
+				
+				<!--Other body parts-->
+				<mx:GridRow>
+					<mx:GridItem>
+						<mx:Label text="Mouth"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<mx:Label text="Teeth"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<mx:Label text="Tail"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<mx:Label text="Angry noise"/>
+					</mx:GridItem>
+				</mx:GridRow>
+				
+				<mx:GridRow>
+					<mx:GridItem>
+						<mx:TextInput id="inputMouth" restrict="A-Za-z" text="mouth/muzzle/beak"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<mx:TextInput id="inputTeeth" restrict="A-Za-z" text="teeth/bill/beak"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<mx:TextInput id="inputTail" restrict="A-Za-z" text="fluffy/short/null"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<mx:TextInput id="inputAngry" restrict="A-Za-z" text="growl/snort/snarl"/>
+					</mx:GridItem>
+				</mx:GridRow>
+				
+			</mx:Grid>
+			
+			
+		<!--Stats for new players-->
+			<mx:TextArea fontWeight="bold" width="100%" height="55"
+						 visible="{newGame}" editable="false" 
+						 text="Stats bonuses must add up to less than 25 and no starting stat may have a bonus higher than 9. Height must be between 48 and 144 inches. "/>
+			
+			<mx:Grid width="100%" visible="{newGame}">
+				<!--Stats?-->
+				<mx:GridRow>
+					<mx:GridItem>
+						<mx:Label text="Strength bonus"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<mx:Label text="Agility bonus"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<mx:Label text="Endurance bonus"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<mx:Label text="Intelligence bonus"/>
+					</mx:GridItem>
+				</mx:GridRow>
+				
+				<mx:GridRow>
+					<mx:GridItem>
+						<mx:Label text="15 +"/>
+						<mx:TextInput id="inputStrength" restrict="0-9" text="5" maxChars="1"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<mx:Label text="15 +"/>
+						<mx:TextInput id="inputAgility" restrict="0-9" text="5" maxChars="1"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<mx:Label text="15 +"/>
+						<mx:TextInput id="inputEndurance" restrict="0-9" text="5" maxChars="1"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<mx:Label text="15 +"/>
+						<mx:TextInput id="inputIntelligence" restrict="0-9" text="5" maxChars="1"/>
+					</mx:GridItem>
+				</mx:GridRow>
+				
+				<!--Miscellaneous-->
+				<mx:GridRow>
+					<mx:GridItem/>
+					<mx:GridItem>
+						<mx:Label text="Stomach capacity bonus"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<mx:Label text="Starting height"/>
+					</mx:GridItem>
+				</mx:GridRow>
+				
+				<mx:GridRow>
+					<mx:GridItem/>
+					<mx:GridItem>
+						<mx:Label text="20 +"/>
+						<mx:TextInput id="inputStomach" restrict="0-9" text="5" maxChars="1"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<mx:TextInput id="inputHeight" restrict="0-9" text="60" maxChars="3"/>
+						<mx:Label text="inches"/>
+					</mx:GridItem>
+					
+				</mx:GridRow>
+				
+			</mx:Grid>
+			
+			<!--Confirm/Deny-->
+			<mx:Grid>
+				<mx:GridRow>
+					<mx:GridItem>
+						<valueObjects:WrapButton id="customBack" label="Back" click="customSpeciesBack()"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<valueObjects:WrapButton id="customComplete" label="Complete" click="completeCustomSpecies()"/>
+					</mx:GridItem>
+				</mx:GridRow>
+			</mx:Grid>
+
+		</s:VGroup>
+		
+		
+		<!--Scene Text-->	
+		<!--Main text area-->
+		<mx:TextArea id="eventText" editable="false" width="675" height="408" htmlText="{mainText}"
+					 fontSize="16" excludeFrom="appearance,surroundings,options,customSpecies,cheat"/>
+		
+		<!--Miscellaneous text area-->
+		<mx:TextArea id="miscText" editable="false" width="675" height="408" htmlText="{miscellaneousText}"
+					 fontSize="16" includeIn="appearance,surroundings,options"/>
+		
+		
+		<!--Buttons-->
+		<!--Options Buttons-->
+		<s:BorderContainer id="common2" top="512" left="384" width="165" height="24"
+						   visible="{appButtonVisibility}" alpha="0.8"
+						   excludeFrom="appearance,surroundings,options,defeated,combat,customSpecies,cheat">
+			<s:layout>
+				<s:HorizontalLayout requestedColumnCount="3"/>
+			</s:layout>
+			
+			<mx:Button id="instuction" click="instructions()" label="Info" height="20" width="50" paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0"/>
+			<mx:Button id="options" click="changeOptions()" label="Options" height="20" width="50" paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0"/>
+			<mx:Button id="loadGame" click="tryLoad()" label="Load" height="20" width="50" paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0"/>
+		</s:BorderContainer>
+		
+		<!--Buttons panel-->
+		<s:Group id="buttonPanel" alpha="0.85"
+				 width="520" height="204"
+				 bottom="0" right="25"
+				 fontSize="14">
+			
+			<!--9 action buttons-->
+			<mx:Grid id="actions" top="0" right="0"
+					 excludeFrom="appearance,surroundings,customSpecies,cheat">
+				<mx:GridRow>
+					<mx:GridItem>
+						<valueObjects:WrapButton id="button1" click="btn1()" label="{buttonLabel1}" visible="{buttonVisible1}" width="124" height="34"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<valueObjects:WrapButton id="button2" click="btn2()" label="{buttonLabel2}" visible="{buttonVisible2}" width="124" height="34"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<valueObjects:WrapButton id="button3" click="btn3()" label="{buttonLabel3}" visible="{buttonVisible3}" width="124" height="34"/>
+					</mx:GridItem>
+				</mx:GridRow>
+				
+				<mx:GridRow>
+					<mx:GridItem>
+						<valueObjects:WrapButton id="button4" click="btn4()" label="{buttonLabel4}" visible="{buttonVisible4}" width="124" height="34"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<valueObjects:WrapButton id="button5" click="btn5()" label="{buttonLabel5}" visible="{buttonVisible5}" width="124" height="34"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<valueObjects:WrapButton id="button6" click="btn6()" label="{buttonLabel6}" visible="{buttonVisible6}" width="124" height="34"/>
+					</mx:GridItem>
+				</mx:GridRow>
+				
+				<mx:GridRow>
+					<mx:GridItem>
+						<valueObjects:WrapButton id="button7" click="btn7()" label="{buttonLabel7}" visible="{buttonVisible7}" width="124" height="34"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<valueObjects:WrapButton id="button8" click="btn8()" label="{buttonLabel8}" visible="{buttonVisible8}" width="124" height="34"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<valueObjects:WrapButton id="button9" click="btn9()" label="{buttonLabel9}" visible="{buttonVisible9}" width="124" height="34"/>
+					</mx:GridItem>
+				</mx:GridRow>
+				
+			</mx:Grid>
+			
+			<!--Bottom decisions panel-->
+			<mx:Grid id="decisions" top="125" right="0"
+					 excludeFrom="appearance,surroundings,customSpecies,cheat">
+				<mx:GridRow>
+					<mx:GridItem>
+						<valueObjects:WrapButton id="decision1" click="dec1()" label="{buttonLabeldec1}" visible="{buttonVisibledec1}" width="124" height="34"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<valueObjects:WrapButton id="decision2" click="dec2()" label="{buttonLabeldec2}" visible="{buttonVisibledec2}" width="124" height="34"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<valueObjects:WrapButton id="decision3" click="dec3()" label="{buttonLabeldec3}" visible="{buttonVisibledec3}" width="124" height="34"/>
+					</mx:GridItem>
+				</mx:GridRow>
+			</mx:Grid>
+						
+			<!--Bottom actions panel-->
+			<mx:Grid id="common" width="100%" visible="false"
+					 right="0" bottom="0"
+					 includeIn="default">
+				<mx:GridRow>
+					<mx:GridItem>
+						<valueObjects:WrapButton id="restLvlBtn" click="restLvl()" visible="{appButtonVisibility}" label="Rest" height="24" width="87"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<valueObjects:WrapButton id="yourselftext" click="doAppearance()" label="Stats" height="24" width="87"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<valueObjects:WrapButton id="surroundingstext" click="doArea()" label="Surroundings" height="24" width="125"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<valueObjects:WrapButton id="stufftext" click="doInventory()" visible="{appButtonVisibility}" label="Inventory" height="24" width="100"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<valueObjects:WrapButton id="spellList" click="doSpells()" visible="{appButtonVisibility}" label="Spells" height="24" width="87"/>
+					</mx:GridItem>
+				</mx:GridRow>
+			</mx:Grid>
+			
+			<!--Inventory/Spell management panel-->
+			<mx:Grid id="inventoryPanel" width="100%"
+					 bottom="0" right="0" 
+					 excludeFrom="default,customSpecies,levelUp,defeated,combat,cheat">
+				<mx:GridRow>
+					<mx:GridItem includeIn="combatInventory,inventory,storage,spells,combatSpells,appearance,surroundings,options">
+						<valueObjects:WrapButton label="Return" click="leaveMisc()" height="24" width="97"/>	
+					</mx:GridItem>
+					<mx:GridItem includeIn="combatInventory,inventory,storage,spells,combatSpells">
+						<valueObjects:WrapButton id="pageUp" label="Page Up" click="doPageUp()" height="24" width="97"/>
+					</mx:GridItem>
+					<mx:GridItem includeIn="combatInventory,inventory,storage,spells,combatSpells">
+						<valueObjects:WrapButton id="pageDown" label="Page Down" click="doPageDown()" height="24" width="97"/>
+					</mx:GridItem>
+					<mx:GridItem includeIn="combatInventory,inventory,storage,spells,combatSpells">
+						<valueObjects:WrapButton id="depositToggle" label="{depositLabel}" click="toggleDeposit()" includeIn="storage" height="24" width="97"/>
+						<valueObjects:WrapButton id="discardToggle" label="{discardLabel}" click="toggleDiscard()" includeIn="inventory" height="24" width="97"/>
+					</mx:GridItem>
+					<mx:GridItem includeIn="combatInventory,inventory,storage,spells,combatSpells">
+						<valueObjects:WrapButton id="gold" label="Gold" click="doStoreGold()" includeIn="storage" height="24" width="97"/>
+						<valueObjects:WrapButton id="unequipToggle" label="Unequip" click="doUnequip()" includeIn="inventory" height="24" width="97"/>
+					</mx:GridItem>
+				</mx:GridRow>
+			</mx:Grid>
+			
+		</s:Group>
+		
+		
+		<!--Gold dialogue for storage-->
+		<s:HGroup id="GoldStorage" includeIn="storage" bottom="100" right="50" visible="false">
+			<s:TextInput id="depositAmount" width="200" restrict="0-9" maxChars="9"/>
+			<mx:Button id="confirm" label="Confirm" click="confirmGold()"/>
+			<mx:Button id="allGold" label="All" click="doAllGold()"/>
+		</s:HGroup>
+		
+		
+		<!--Stat Panels-->
+		<mx:Grid id="statPanel" left="5" bottom="0" 
+				 visible="{!newGame}" fontSize="16" verticalGap="1"
+				 excludeFrom="customSpecies,cheat">
+			
+			<mx:GridRow>
+				<mx:GridItem>
+					<s:Label text="Strength"/>
+				</mx:GridItem>
+				<mx:GridItem>
+					<s:Group>
+						<s:BitmapImage source="@Embed('Assets/downArrow.png')" id="strengthDownArrow" visible="false" />
+						<s:BitmapImage source="@Embed('Assets/upArrow.png')" id="strengthUpArrow" visible="false"/>
+					</s:Group>
+				</mx:GridItem>
+				<mx:GridItem>
+					<s:Label text="{int(STR)}" color="{strColor}"/>
+				</mx:GridItem>
+				<mx:GridItem>
+					<s:Group>
+						<s:Rect height="14" width="{STR % 100}">
+							<s:fill>
+								<s:SolidColor color="0x005500"/>
+							</s:fill>
+						</s:Rect>
+					</s:Group>
+				</mx:GridItem>
+			</mx:GridRow>
+			
+			<mx:GridRow>
+				<mx:GridItem>
+					<s:Label text="Agility"/>
+				</mx:GridItem>
+				<mx:GridItem>
+					<s:Group>
+						<s:BitmapImage source="@Embed('Assets/downArrow.png')" id="speedDownArrow" visible="false"/>
+						<s:BitmapImage source="@Embed('Assets/upArrow.png')" id="speedUpArrow" visible="false"/>
+					</s:Group>
+				</mx:GridItem>
+				<mx:GridItem>
+					<s:Label text="{int(AGI)}" color="{agiColor}"/>
+				</mx:GridItem>
+				<mx:GridItem>
+					<s:Group>
+						<s:Rect height="14" width="{AGI % 100}">
+							<s:fill>
+								<s:SolidColor color="0x005500"/>
+							</s:fill>
+						</s:Rect>
+					</s:Group>
+				</mx:GridItem>
+			</mx:GridRow>
+			
+			<mx:GridRow>
+				<mx:GridItem>
+					<s:Label text="Endurance"/>
+				</mx:GridItem>
+				<mx:GridItem>
+					<s:Group>
+						<s:BitmapImage source="@Embed('Assets/downArrow.png')" id="enduranceDownArrow" visible="false"/>
+						<s:BitmapImage source="@Embed('Assets/upArrow.png')" id="enduranceUpArrow" visible="false"/>
+					</s:Group>
+				</mx:GridItem>
+				<mx:GridItem>
+					<s:Label text="{int(END)}" color="{endColor}"/>
+				</mx:GridItem>
+				<mx:GridItem>
+					<s:Group>
+						<s:Rect height="14" width="{END % 100}">
+							<s:fill>
+								<s:SolidColor color="0x005500"/>
+							</s:fill>
+						</s:Rect>
+					</s:Group>
+				</mx:GridItem>
+			</mx:GridRow>
+			
+			<mx:GridRow>
+				<mx:GridItem>
+					<s:Label text="Intelligence"/>
+				</mx:GridItem>
+				<mx:GridItem>
+					<s:Group>
+						<s:BitmapImage source="@Embed('Assets/downArrow.png')" id="intelligenceDownArrow" visible="false"/>
+						<s:BitmapImage source="@Embed('Assets/upArrow.png')" id="intelligenceUpArrow" visible="false"/>
+					</s:Group>
+				</mx:GridItem>
+				<mx:GridItem>
+					<s:Label text="{int(INT)}" color="{intColor}"/>
+				</mx:GridItem>
+				<mx:GridItem width="100">
+					<s:Group>
+						<s:Rect height="14" width="{INT % 100}">
+							<s:fill>
+								<s:SolidColor color="0x005500"/>
+							</s:fill>
+						</s:Rect>
+					</s:Group>
+				</mx:GridItem>
+			</mx:GridRow>
+			
+			<mx:GridRow>
+				<mx:GridItem>
+					<s:Label text="Fatness"/>
+				</mx:GridItem>
+				<mx:GridItem>
+					<s:Group>
+						<s:BitmapImage source="@Embed('Assets/downArrow.png')" id="fatnessDownArrow" visible="false"/>	
+						<s:BitmapImage source="@Embed('Assets/upArrow.png')" id="fatnessUpArrow" visible="false"/>	
+					</s:Group>
+				</mx:GridItem>
+				<mx:GridItem>
+					<s:Label text="{int(FAT + tenemyFATdebuff)}"/>
+				</mx:GridItem>
+			</mx:GridRow>
+			
+		</mx:Grid>
+		
+		<!--Secondary stat panel-->
+		<mx:Grid left="5" top="415"
+				 visible="{!newGame}" excludeFrom="customSpecies,cheat" 
+				 fontSize="16" verticalGap="3" horizontalGap="1">
+			<mx:GridRow>
+				<mx:GridItem>
+					<s:Label text="Health"/>
+				</mx:GridItem>
+				<mx:GridItem>
+					<s:Group>
+						<s:BitmapImage source="@Embed('Assets/downArrow.png')" id="healthDownArrow" visible="false"/>
+						<s:BitmapImage source="@Embed('Assets/upArrow.png')" id="healthUpArrow" visible="false"/>
+					</s:Group>
+				</mx:GridItem>
+				<mx:GridItem width="100" horizontalAlign="center">
+					<s:Label text="{int(HEA)}/{int(maxHEA)}" color="{healthColor}"/>
+				</mx:GridItem>
+				<mx:GridItem width="70">
+					<s:Group>
+						<s:Rect id="healthBar" height="16" width="70" scaleX="{HEAbarScale}">
+							<s:fill>
+								<s:SolidColor color="0x005500"/>
+							</s:fill>
+						</s:Rect>
+					</s:Group>
+				</mx:GridItem>
+				<mx:GridItem>
+					<s:Label text="Stamina"/>
+				</mx:GridItem>
+				<mx:GridItem>
+					<s:Group>
+						<s:BitmapImage source="@Embed('Assets/downArrow.png')" id="staminaDownArrow" visible="false"/>
+						<s:BitmapImage source="@Embed('Assets/upArrow.png')" id="staminaUpArrow" visible="false"/>
+					</s:Group>
+				</mx:GridItem>
+				<mx:GridItem width="100" horizontalAlign="center">
+					<s:Label text="{int(STA)}%"/>
+				</mx:GridItem>
+				<mx:GridItem width="70">
+					<s:Group>
+						<s:Rect height="16" width="70" scaleX="{STA*.01}" id="staminaBar">
+							<s:fill>
+								<s:SolidColor color="0x005500"/>
+							</s:fill>
+						</s:Rect>
+					</s:Group>
+				</mx:GridItem>
+			</mx:GridRow>
+			
+			<mx:GridRow>
+				<mx:GridItem>
+					<s:Label text="Mana"/>
+				</mx:GridItem>
+				<mx:GridItem>
+					<s:Group>
+						<s:BitmapImage source="@Embed('Assets/downArrow.png')" id="manaDownArrow" visible="false"/>
+						<s:BitmapImage source="@Embed('Assets/upArrow.png')" id="manaUpArrow" visible="false"/>
+					</s:Group>
+				</mx:GridItem>
+				<mx:GridItem horizontalAlign="center">
+					<s:Label text="{Math.floor(MANA)}/{Math.floor(maxMANA)}" color="{manaColor}"/>
+				</mx:GridItem>
+				<mx:GridItem width="70">
+					<s:Group>
+						<s:Rect height="16" width="70" scaleX="{MANAbarScale}" minWidth="0" id="manaBar">
+							<s:fill>
+								<s:SolidColor color="0x000066"/>
+							</s:fill>
+						</s:Rect>
+					</s:Group>
+				</mx:GridItem>
+				<mx:GridItem>
+					<s:Label text="Fullness"/>
+				</mx:GridItem>
+				<mx:GridItem>
+					<s:Group>
+						<s:BitmapImage source="@Embed('Assets/downArrow.png')" id="fullnessDownArrow" visible="false"/>
+						<s:BitmapImage source="@Embed('Assets/upArrow.png')" id="fullnessUpArrow" visible="false"/>
+					</s:Group>
+				</mx:GridItem>
+				<mx:GridItem horizontalAlign="center">
+					<s:Label text="{int(ATE)}/{int(STO)} " color="{stoColor}"/>
+					<s:Label text="({int(FUL)}%)" fontSize="10" color="{stoColor}"/>
+				</mx:GridItem>
+				<mx:GridItem width="70">
+					<s:Group>
+						<s:Rect height="16" width="70" scaleX="{FULbarScale}" minWidth="0" id="fullnessBar">
+							<s:fill>
+								<s:SolidColor color="0x005500"/>
+							</s:fill>
+						</s:Rect>
+					</s:Group>
+				</mx:GridItem>
+			</mx:GridRow>
+			
+		</mx:Grid>
+		
+		<!--Experience panel-->
+		<s:BorderContainer bottom="116" left="5" fontSize="16" width="250" height="40" visible="{!newGame}" excludeFrom="customSpecies,cheat">
+			
+			<s:layout>
+				<s:VerticalLayout/>
+			</s:layout>
+			
+			<s:HGroup>
+				<s:Label text="Level: {LVL} "/>
+				<s:Label text="Experience: {XP}/{XPtoLevel}"/>
+				<s:Rect height="15" width="100" minWidth="0" scaleX="{XP/XPtoLevel}">
+					<s:fill>
+						<s:SolidColor color="0xD4A017"/>
+					</s:fill>
+				</s:Rect>
+			</s:HGroup>
+			
+			<s:HGroup>
+				<!--Weight-->
+				<s:Group>
+					<s:Label text="Weight: {int( (bSTR * 3) + FAT + Eaten + Drank + InflatedMass + 40)} lbs" visible="{optionsImperial}"/>
+					<s:Label text="Weight: {int( ((bSTR * 3) + FAT + Eaten + Drank + InflatedMass + 40) * 0.453592)} kgs" visible="{optionsMetric}"/>
+				</s:Group>
+				<!--Waist diameter-->
+				<s:Group>
+					<!--inches-->
+					<s:Group visible="{optionsImperial}">
+						<s:Label text="Waist diameter: {
+								 Math.floor((2*Math.pow( ( (90 *(ATE + ((FAT + tenemyFATdebuff) * .21) ) )/(4*Math.PI) ),(1/3)) - 5)/12)}&apos;{
+								 Math.floor((2*Math.pow( ( (90 *(ATE + ((FAT + tenemyFATdebuff) * .21) ) )/(4*Math.PI) ),(1/3)) - 5) % 12)}&quot;"
+								 visible="{Math.floor((2*Math.pow( ( (90 *(ATE + ((FAT + tenemyFATdebuff) * .21) ) )/(4*Math.PI) ),(1/3)) - 5)) > 0}"/>
+						<s:Label text="Waist size: 0&apos;0&quot;"
+								 visible="{0 >= Math.floor((2*Math.pow( ( (90 *(ATE + ((FAT + tenemyFATdebuff) * .21) ) )/(4*Math.PI) ),(1/3)) - 5))}"/>
+					</s:Group>
+					<!--centimeters-->
+					<s:Group visible="{optionsMetric}">
+						<s:Label text="Waist size: {Math.floor((2*Math.pow( ( (90 *(ATE + ((FAT + tenemyFATdebuff) * .21) ) )/(4*Math.PI) ),(1/3)) - 5)*2.54)} cm"
+								 visible="{Math.floor((2*Math.pow( ( (90 *(ATE + ((FAT + tenemyFATdebuff) * .21) ) )/(4*Math.PI) ),(1/3)) - 5)*2.54) > 0}"/>
+						<s:Label text="Waist size: 0 cm"
+								 visible="{0 >= Math.floor((2*Math.pow( ( (90 *(ATE + ((FAT + tenemyFATdebuff) * .21) ) )/(4*Math.PI) ),(1/3)) - 5)*2.54)}"/>
+						
+					</s:Group>
+				</s:Group>
+			</s:HGroup>
+			
+			
+		</s:BorderContainer>
+		
+		
+		<!--New game options-->
+		<!--Name input-->
+		<s:TextInput id="nameInput" includeIn="default" right="225" top="450" restrict="A-Za-z" visible="false" maxChars="15"/>
+		
+		<!--Species input-->
+		<s:DropDownList id="speciesDropDown" labelField="name" prompt="Select species..." change="displaySpeciesStats()" 
+						right="170" top="490" visible="false" excludeFrom="customSpecies,cheat">
+			<s:dataProvider>
+				<s:ArrayList>
+					<fx:Object name="Lion" type="{Lion}"/>
+				</s:ArrayList>
+			</s:dataProvider>
+		</s:DropDownList>
+		
+		<!--Miscellaneous text-->
+		<!--Inventory page-->
+		<s:Label text="Page: {invPage}" includeIn="combatInventory,inventory,storage" right="325" top="400"/>
+		<!--Spell page-->
+		<s:Label text="Page: {spellPage}" includeIn="spells,combatSpells" right="325" top="400"/>
+		<!--Clock-->
+		<s:Label  id="clock" top="400" horizontalCenter="350" backgroundAlpha="0.3" backgroundColor="10053120" color="black" excludeFrom="customSpecies,cheat" 
+				  text="Day {day}   {displayHour}:{tensMinute}{int(onesMinute)} {AMPM}"/>
+		<!--Location name-->
+		<s:Label text="{capFirst(location.Name)}" id="locationText" 
+				 excludeFrom="combat,combatInventory,combatSpells,customSpecies,cheat" top="5" horizontalCenter="350" backgroundAlpha="0.3" backgroundColor="10053120"/>
+		<!--Enemy health-->
+		<s:Label text="{capFirst(enemyt.name)}&#13;Level {enemyt.level}   {Math.ceil((eHEA / enemyt.maxHEA)*100)}% HP" includeIn="combat,combatInventory,combatSpells" 
+				 fontSize="11" top="0" horizontalCenter="347" width="193" height="23" textAlign="center" backgroundAlpha="0.3" backgroundColor="10053120"/>
+		<!--Gold-->
+		<s:Label bottom="0" left="330" fontSize="25" text="Gold {int(GLD)}" visible="{!newGame}" excludeFrom="customSpecies,cheat" backgroundAlpha="0.3" backgroundColor="10053120"/>
+				
+		
+	</s:Group>
+	
+</s:Application>
