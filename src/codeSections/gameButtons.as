@@ -83,37 +83,37 @@ protected function buttonIcons(buttonNumber:int,buttonIcon:Class):void{
 	switch(buttonNumber){
 		case 1:
 			button1.setStyle("icon",buttonIcon);
-			break
+			break;
 		case 2:
 			button2.setStyle("icon",buttonIcon);
-			break
+			break;
 		case 3:
 			button3.setStyle("icon",buttonIcon);
-			break
+			break;
 		case 4:
 			button4.setStyle("icon",buttonIcon);
-			break
+			break;
 		case 5:
 			button5.setStyle("icon",buttonIcon);
-			break
+			break;
 		case 6:
 			button6.setStyle("icon",buttonIcon);
-			break
+			break;
 		case 7:
 			button7.setStyle("icon",buttonIcon);
-			break
+			break;
 		case 8:
 			button8.setStyle("icon",buttonIcon);
-			break
+			break;
 		case 9:
 			button9.setStyle("icon",buttonIcon);
-			break
+			break;
 		case 11:
 			decision1.setStyle("icon",buttonIcon);
-			break
+			break;
 		case 12:
 			decision2.setStyle("icon",buttonIcon);
-			break
+			break;
 		case 13:
 			decision3.setStyle("icon",buttonIcon);
 			break
