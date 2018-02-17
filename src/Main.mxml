@@ -268,7 +268,6 @@
         include "codeSections/gameTravel.as";
         include "codeSections/gameQuests.as";
         include "codeSections/events/gameEvents.as";
-        new entrypoint();
         ]]>
 	</fx:Script>
 
